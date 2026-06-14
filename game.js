@@ -1,10 +1,12 @@
 let groups = [];
 let currentGroup = 0;
-let apiKey = '';
-let selectedModel = '';
+let apiKey = ''; // 兼容旧代码，Worker 模式下不需要
+let selectedModel = 'gemini-2.0-flash';
 let bgmAudio = null;
 let audioCtx = null;
 let currentSysPrompt = '';
+
+const WORKER_URL = 'https://napoleon-ai.chewyenhan.workers.dev';
 
 // UI Navigation
 function showPanel(id) {
@@ -13,8 +15,7 @@ function showPanel(id) {
 }
 
 function initAll() {
-    const sel = document.getElementById('model-select');
-    if (sel.style.display === 'block') selectedModel = sel.value;
+    detectModels();
     initAudio();
     showPanel('p-setup');
 }
@@ -99,14 +100,7 @@ function renderNode() {
             ca.appendChild(btn);
         });
     } else if (node.ai_eval) {
-        if (apiKey && selectedModel) requestAIEval();
-        else {
-            const btn = document.createElement('button');
-            btn.className = 'sys-btn';
-            btn.textContent = "结束剧情 (未配置API)";
-            btn.onclick = () => { g.ending = "未配置API，无法获得结局。"; showEnding(); };
-            ca.appendChild(btn);
-        }
+        requestAIEval();
     }
 }
 
@@ -148,9 +142,14 @@ async function sendChat() {
     history.innerHTML += `<p style="color:#c9a44c;" id="ai-thinking"><i>...</i></p>`;
     
     try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ system_instruction: { parts: [{ text: currentSysPrompt }] }, contents: [{ role: 'user', parts: [{ text: `玩家发言是：“${msg}”。${turnPrompt}` }] }] })
+        const res = await fetch(`${WORKER_URL}/gemini`, {
+            method: 'POST', 
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ 
+                model: selectedModel,
+                system_instruction: { parts: [{ text: currentSysPrompt }] }, 
+                contents: [{ role: 'user', parts: [{ text: `玩家发言是：“${msg}”。${turnPrompt}` }] }] 
+            })
         });
         const data = await res.json();
         const reply = data.candidates[0].content.parts[0].text;
@@ -238,16 +237,20 @@ function initAudio() { if (bgmAudio) return; bgmAudio = new Audio('assets/1812_o
 
 // API Detection
 async function detectModels() {
-    const key = document.getElementById('api-key-input').value.trim(); if (!key) { showToast("请输入API Key"); return; }
     try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+        const res = await fetch(`${WORKER_URL}/models`);
         const data = await res.json();
-        const models = data.models.filter(m => m.name.includes('gemini') && m.supportedGenerationMethods.includes('generateContent'));
         const sel = document.getElementById('model-select');
         sel.innerHTML = '';
-        models.forEach(m => { const opt = document.createElement('option'); opt.value = m.name.replace('models/', ''); opt.textContent = m.displayName || m.name; sel.appendChild(opt); });
-        sel.style.display = 'block';
-        apiKey = key;
-        showToast("模型加载成功！");
-    } catch (e) { showToast("检测失败，请检查网络或Key"); }
+        data.models.forEach(m => { 
+            const opt = document.createElement('option'); 
+            opt.value = m.name.replace('models/', ''); 
+            opt.textContent = m.displayName || m.name; 
+            sel.appendChild(opt); 
+        });
+        if (sel.options.length > 0) {
+            sel.selectedIndex = 0;
+            selectedModel = sel.value;
+        }
+    } catch (e) { console.error("模型加载失败", e); }
 }

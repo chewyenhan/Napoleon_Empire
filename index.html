@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>拿破仑：法兰西的荣光与倾覆</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +19,7 @@
 
 <div id="p-start" class="panel active" style="text-align: center; justify-content: center; background: #0c1424; border: 15px solid #c9a44c; border-style: ridge; position: relative; overflow: hidden;">
     <div style="position: absolute; top:0; left:0; width:100%; height:100%; z-index:0; opacity: 0.3; pointer-events: none;">
-        <img src="assets/start_bg.png" style="width:100%; height:100%; object-fit: cover;">
+        <img src="assets/start_bg.png" style="width:100%; height:100%; object-fit: contain;">
     </div>
     
     <div style="position: relative; z-index:10; width: 100%;">
@@ -87,15 +90,21 @@
 
 <div id="p-game" class="panel">
     <div id="status-bar">
-        <span id="show-gname">玩家</span>
-        <span id="show-stat">状态</span>
+        <div class="stat-item" id="stat-name">👤 <span id="show-gname">玩家</span></div>
+        <div class="stat-item" id="stat-army" style="display:none;">⚔️ 军队: <span id="show-army">100</span></div>
+        <div class="stat-item" id="stat-morale" style="display:none;">🚩 士气: <span id="show-morale">100</span></div>
+        <div class="stat-item" id="stat-wealth" style="display:none;">💰 财富: <span id="show-wealth">50</span></div>
+        <div class="stat-item" id="stat-order" style="display:none;">⚖️ 秩序: <span id="show-order">50</span></div>
+        <div class="stat-item" id="stat-alliance" style="display:none;">🤝 同盟: <span id="show-alliance">0</span></div>
+        <div class="stat-item" id="stat-dev">📜 偏离: <span id="show-dev">0</span></div>
+        <div class="stat-item" id="stat-score">🏆 分数: <span id="show-score">0</span></div>
     </div>
     <div id="story-text">加载中...</div>
     <div id="choices-area"></div>
     <div id="ai-chat-area" style="display: none;">
         <div id="chat-history"></div>
         <div id="chat-input-area" style="display: flex; gap: 10px; margin-top: 10px;">
-            <input type="text" id="chat-input" class="group-input" style="flex-grow: 1; font-size: 1.2em; padding: 10px;" placeholder="在此输入你的策略...">
+            <input type="text" id="chat-input" class="group-input" style="flex-grow: 1; font-size: 1.2em; padding: 10px;" placeholder="在此输入你的策略..." onkeydown="if(event.key==='Enter') sendChat()">
             <button class="sys-btn" onclick="sendChat()" style="width: auto; padding: 10px 20px;">发言</button>
         </div>
     </div>

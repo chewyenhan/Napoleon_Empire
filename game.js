@@ -237,20 +237,40 @@ function initAudio() { if (bgmAudio) return; bgmAudio = new Audio('assets/1812_o
 
 // API Detection
 async function detectModels() {
+    const sel = document.getElementById('model-select');
+    const status = document.getElementById('model-status');
     try {
         const res = await fetch(`${WORKER_URL}/models`);
         const data = await res.json();
-        const sel = document.getElementById('model-select');
         sel.innerHTML = '';
-        data.models.forEach(m => { 
-            const opt = document.createElement('option'); 
-            opt.value = m.name.replace('models/', ''); 
-            opt.textContent = m.displayName || m.name; 
-            sel.appendChild(opt); 
-        });
+        if (data.models) {
+            data.models.forEach(m => { 
+                const opt = document.createElement('option'); 
+                opt.value = m.name.replace('models/', ''); 
+                opt.textContent = m.displayName || m.name; 
+                sel.appendChild(opt); 
+            });
+        }
         if (sel.options.length > 0) {
             sel.selectedIndex = 0;
             selectedModel = sel.value;
+            if (status) status.innerText = "✅ AI 服务连接成功";
+            sel.style.display = 'block';
+        } else {
+            throw new Error("No models returned");
         }
-    } catch (e) { console.error("模型加载失败", e); }
+    } catch (e) { 
+        console.warn("模型加载失败，使用默认列表", e);
+        if (status) status.innerText = "⚠️ 自动连接失败，使用内置线路";
+        sel.innerHTML = '';
+        ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'].forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            sel.appendChild(opt);
+        });
+        sel.selectedIndex = 0;
+        selectedModel = sel.value;
+        sel.style.display = 'block';
+    }
 }

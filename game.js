@@ -352,7 +352,7 @@ async function detectModels() {
         }
     } catch (e) {
         if (status) status.innerText = "⚠️ 使用内置线路";
-        ['gemini-3.5-flash-lite'].forEach(m => {
+        ['gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'].forEach(m => {
             const opt = document.createElement('option'); opt.value = m; opt.textContent = m; sel.appendChild(opt);
         });
         sel.style.display = 'block';

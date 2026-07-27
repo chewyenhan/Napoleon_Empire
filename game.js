@@ -1,9 +1,11 @@
 let groups = [];
 let currentGroup = 0;
-let selectedModel = 'gemini-2.0-flash';
+let selectedModel = 'gemini-3.5-flash-lite';
 let bgmAudio = null;
 let audioCtx = null;
 let currentSysPrompt = '';
+
+let customApiKey = 'worker'; // Worker 模式，无需手动输入 Key
 
 // 【核心设定：保留原有 API 链接】
 const WORKER_URL = 'https://napoleon-ai.chewyenhan.workers.dev';
@@ -350,7 +352,7 @@ async function detectModels() {
         }
     } catch (e) {
         if (status) status.innerText = "⚠️ 使用内置线路";
-        ['gemini-2.0-flash', 'gemini-1.5-pro'].forEach(m => {
+        ['gemini-3.5-flash-lite'].forEach(m => {
             const opt = document.createElement('option'); opt.value = m; opt.textContent = m; sel.appendChild(opt);
         });
         sel.style.display = 'block';

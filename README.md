@@ -30,7 +30,7 @@
 
 ## 🛠️ 技术架构
 - **Frontend**: 纯前端架构 (HTML5, CSS3, Vanilla JavaScript)
-- **AI Engine**: Google Gemini API（AI 历史结局点评）
+- **AI Engine**: Google Gemini API（经 Cloudflare Worker 代理，Key 不下发）
 - **Deployment**: 完美适配 GitHub Pages 静态部署
 
 ## 🚀 快速开始
@@ -43,15 +43,14 @@ cd Napoleon_Empire
 # 用浏览器打开 index.html
 ```
 
-### 配置 AI 核心
-进入游戏后，在首页输入您的 **Gemini API Key**（免费获取：前往 [Google AI Studio](https://aistudio.google.com/apikey)），点击"检测并加载模型"即可开启 AI 智能终局对话功能。
+### AI 服务（无需配置）
+本游戏已内置 **Cloudflare Worker 代理**（`napoleon-ai.chewyenhan.workers.dev`），Gemini API Key 仅存于 Worker 端、**永不下发到浏览器**。打开游戏后首页会自动连接 AI 服务，点击「帝国远征」即可直接开始，**无需输入任何 Key**。
 
 ## 📖 游戏流程
-1. **输入 API Key**（可选，但推荐以解锁 AI 终局点评）
-2. **设定玩家数量**并输入玩家名称
-3. **每位玩家选择身份**：帝国军官 / 内政法官 / 反法同盟军
-4. **经历关键历史抉择**，每个抉择影响角色的五大属性（军队、民心、财富、秩序、同盟）
-5. **AI 终局审判**：在枫丹白露退位、维也纳会议等场景中，与历史人物对话，由 AI 评判你的结局
+1. **设定玩家数量**并输入玩家名称
+2. **每位玩家选择身份**：帝国军官 / 内政法官 / 反法同盟军
+3. **经历关键历史抉择**，每个抉择影响角色的五大属性（军队、民心、财富、秩序、同盟）
+4. **AI 终局审判**：在枫丹白露退位、维也纳会议等场景中，与历史人物对话，由 AI 评判你的结局
 
 ---
 
